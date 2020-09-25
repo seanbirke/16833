@@ -1,6 +1,5 @@
 import numpy as np
 import math
-import sys
 import time
 from matplotlib import pyplot as plt
 from scipy.stats import norm
@@ -76,13 +75,9 @@ class SensorModel:
             +self.zShort*self.pShort(zkt,xt,xtLaser)\
             +self.zMax*self.pMax(zkt)\
             +self.zRand*self.pRand(zkt)
-        """
-        TODO : Add your code here
-        """
+            p=p*q
 
-        return q    
- 
+        return q
+
 if __name__=='__main__':
-    print("bruh")
-    sys.exit(0)
     pass
