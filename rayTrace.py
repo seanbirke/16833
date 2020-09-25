@@ -8,16 +8,15 @@ def rayTrace(pos,map):
     adj=25
     xSlope=math.cos(pos[2])
     ySlope=math.sin(pos[2])
-    maxX=map.shape[0]*10;
-    maxY=map.shape[1]*10;
     #put 25cm adjustment for laser
-    rayPos=[pos[0]-adj*xSlope,pos[1]-adj*ySlope,pos[2]];
+    rayPos=[pos[0]-adj*xSlope,pos[1]-adj*ySlope,pos[2]]
     res=10
+    maxX=map.shape[0]*10
+    maxY=map.shape[1]*10
     wallPosX=(maxX-pos[0])
     wallPosY=(maxY-pos[1])
     withinX = rayPos[0] > 0 and rayPos[0] < maxX
     withinY = rayPos[1] > 0 and rayPos[1] < maxY
-    print("bruh%b%b", (withinX, withinY, int(rayPos[0] / 10), int(rayPos[1] / 10), rayPos[0], rayPos[1]))
     notWall = (withinX and withinY and map[int(rayPos[1] / 10)][int(rayPos[0] / 10)] < 0)
     while(withinX and withinY and notWall):
         toNext=0
@@ -45,7 +44,6 @@ def rayTrace(pos,map):
         rayPos=newPos
         withinX=rayPos[0]>0 and rayPos[0]<maxX
         withinY=rayPos[1]>0 and rayPos[1]<maxY
-        print("bruh%b%b", (withinX,withinY,int(rayPos[0]/10),int(rayPos[1]/10),rayPos[0],rayPos[1]))
         notWall = (withinX and withinY and map[int(rayPos[1]/10)][int(rayPos[0]/10)] < 0)
         #return ray length
     return math.sqrt((pos[0]-rayPos[0])**2+(pos[1]-rayPos[1])**2)
