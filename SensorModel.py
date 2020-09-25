@@ -20,7 +20,7 @@ class SensorModel:
         #note: adjust these later
         self.stdDevHit=0.01
         self.lambdaShort=0.01
-        self.measureMax=200
+        self.measureMax=8191
         self.zHit=0.25
         self.zShort=0.25
         self.zMax=0.25

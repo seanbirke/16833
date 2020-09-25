@@ -45,5 +45,5 @@ def rayTrace(pos,map):
         withinX=rayPos[0]>0 and rayPos[0]<maxX
         withinY=rayPos[1]>0 and rayPos[1]<maxY
         notWall = (withinX and withinY and map[int(rayPos[1]/10)][int(rayPos[0]/10)] < 0)
-        #return ray length
+    #return ray length
     return math.sqrt((pos[0]-rayPos[0])**2+(pos[1]-rayPos[1])**2)
