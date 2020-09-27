@@ -32,7 +32,7 @@ class MotionModel:
         d_rot2 = u_t1[2] - u_t0[2] - d_rot1
 
         dh_rot1 = d_rot1 - np.random.normal(scale = (self.alpha_1 * d_rot1**2 + self.alpha_2 * d_trans**2))
-        dh_trans = d_trans - np.random.normal(scale = (self.alpha_3 * d_trans**2 + self.alpha_4 * (d_rot**21 + d_rot2**2)))
+        dh_trans = d_trans - np.random.normal(scale = (self.alpha_3 * d_trans**2 + self.alpha_4 * (d_rot1**2 + d_rot2**2)))
         dh_rot2 = d_rot2 - np.random.normal(scale = (self.alpha_1 * d_rot2**2 + self.alpha_2 * d_trans**2))
 
         x_p = x_t0[0] + dh_trans * math.cos(x_t0[2] + dh_rot1)
