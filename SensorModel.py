@@ -29,7 +29,7 @@ class SensorModel:
     def pHit(self,zkt,xt,xtLaser):
         if 0<=zkt and zkt<=self.measureMax:
             #normalizer is cdf of the norm
-            zktStar = rayTrace(xtLaser, map)
+            zktStar = rayTrace(xtLaser,self.map)
             zVal=float(zkt-zktStar)/self.stdDevHit
             normalizer=1/norm.cdf(zVal)
             return normalizer*norm.pdf(zVal)
