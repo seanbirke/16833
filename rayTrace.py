@@ -26,7 +26,7 @@ def rayTrace(pos,lAngle,map):
         #increment rayPos by eps along its direction
 
         #update rayPos
-        rayPos=[rayPos[0]+xSlope*eps,rayPos[1]+ySlope*eps,rayPos[2]]
+        rayPos=[rayPos[0]+xSlope*eps,rayPos[1]+iySlope*eps,rayPos[2]]
         withinX=rayPos[0]>0 and rayPos[0]<maxX
         withinY=rayPos[1]>0 and rayPos[1]<maxY
         notWall = (withinX and withinY and
