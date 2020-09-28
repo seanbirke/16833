@@ -1,4 +1,5 @@
 import math
+#code heavily based on work from lodev.org/cgtutor/raycasting.html
 #note: assumes map pixels are 10 cm
 #estimates distance to nearest surface by following traj of x until hitting surface in map
 #pos=[x,y,theta] of the robot,lAngle=angle offset of laser
@@ -9,31 +10,60 @@ def rayTrace(pos,lAngle,map):
     #find current block in map
     adj=25
     laserTheta=pos[2]+lAngle
-    xSlope=math.cos(laserTheta)
-    ySlope=math.sin(laserTheta)
+    rayDirX=math.cos(laserTheta)
+    rayDirY=math.sin(laserTheta)
+    deltaDist=[0,0]
+    eps=0.0001
+    if rayDirX>=eps and rayDirY>=eps:
+        deltaDist=[abs(1/rayDirX),abs(1/rayDirY)]
     res=10
-    #initialize rayPos
+    #initialize rayPos, position of ray in xy
     rayPos=[pos[0],pos[1],laserTheta]
+    #position in map coordinates
+    mapPos=[int(rayPos[0])/10,int(rayPos[1])/10,laserTheta]
+    #length of ray to next x or y side
+    sideDistX=0
+    sideDistY=0
+    #ray direction
+    stepX=1
+    stepY=1
+    side=0
+    if rayDirX<0:
+        stepX=-1
+        sideDistX=(rayPos[0]-mapPos[0]*10)*deltaDist[0];
+    else:
+        stepX=1
+        sideDistX=(mapPos[0]*10-rayPos[0]+10)*deltaDist[0];
+    if rayDirY<0:
+        stepY=-1
+        sideDistY=(rayPos[1]-mapPos[1]*10)*deltaDist[1];
+    else:
+        stepX=1
+        sideDistX=(mapPos[1]*10-rayPos[1]+10)*deltaDist[1];
     maxX=map.shape[0]*10
     maxY=map.shape[1]*10
-    wallPosX=(maxX-pos[0])
-    wallPosY=(maxY-pos[1])
-    eps=1
-    withinX = rayPos[0] > 0 and rayPos[0] < maxX
-    withinY = rayPos[1] > 0 and rayPos[1] < maxY
-    notWall = (withinX and withinY and map[int(rayPos[1] / 10)][int(rayPos[0] / 10)] < 0)
+    withinX = rayPos[0] > 0 and mapPos[0] < map.shape[0]
+    withinY = mapPos[0]>=0 and mapPos[0] < map.shape[1]
+    notWall = (withinX and withinY and map[mapPos[1]][mapPos[0]] < 0)
+
     while(withinX and withinY and notWall):
-        #increment rayPos by eps along its direction
+        #jump to next map square or in x-dir or in y-dir
+        if sideDistX<sideDistY:
+            sideDistX+=deltaDistX
+            mapPos[0]+=stepX
+            side=0
+        else:
+            sideDistY+=deltaDistY
+            mapPos[1]+=stepY
+            side=1
+        withinX = rayPos[0] > 0 and mapPos[0] < map.shape[0]
+        withinY = mapPos[0]>=0 and mapPos[0] < map.shape[1]
+        notWall = (withinX and withinY and map[mapPos[1]][mapPos[0]] < 0)
 
-        #update rayPos
-        rayPos=[rayPos[0]+xSlope*eps,rayPos[1]+iySlope*eps,rayPos[2]]
-        withinX=rayPos[0]>0 and rayPos[0]<maxX
-        withinY=rayPos[1]>0 and rayPos[1]<maxY
-        notWall = (withinX and withinY and
-                map[int(rayPos[1]/10)][int(rayPos[0]/10)] < 0)
-
+    readingLen=sideDistX
+    if side==1:
+        readingLen=sideDistY
     #return ray length, with 25cm adjustment for laser
-    readingLen=math.sqrt((pos[0]-rayPos[0])**2+(pos[1]-rayPos[1])**2)
     finalLen=adjuster(readingLen,adj,abs(lAngle))
     #print(finalLen,withinX,withinY,notWall)
     return finalLen

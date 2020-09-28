@@ -30,20 +30,17 @@ class SensorModel:
         self.zRand=0.25
 
 
-    def pHit(self,zkt,xt,laserAngle):
+    def pHit(self,zkt,zktStar):
         if 0<=zkt and zkt<=self.measureMax:
-
-            zktStar = rayTrace(xt,laserAngle,self.map)
             cdf = norm.cdf(zkt, loc=zktStar, scale=self.stdDevHit)
             # if cdf is zero, zkt is far from zktStar, probability is ~0
-            if cdf == 0:
+            if cdf < 0.0001:
                 return 0
             normalizer = 1/cdf
             return normalizer * norm.pdf(zkt, loc=zktStar, scale=self.stdDevHit)
         return 0
 
-    def pShort(self,zkt,xt,laserAngle):
-        zktStar=rayTrace(xt,laserAngle,self.map)
+    def pShort(self,zkt,zktStar):
         if 0<=zkt and zkt<=zktStar:
             n=1.0/(1-math.exp(-self.lambdaShort*zktStar))
             return n*self.lambdaShort*math.exp(-self.lambdaShort*zkt)
@@ -73,8 +70,11 @@ class SensorModel:
             lasAngle=-math.pi/2+k*math.pi/180
             #compute zkt; adjust for laser position
             zkt=adjuster(z_t1_arr[k],25,abs(lasAngle))
-            p=self.zHit*self.pHit(zkt,x_t1,lasAngle)\
-            +self.zShort*self.pShort(zkt,x_t1,lasAngle)\
+            #compute zktStar estimate using ray tracing
+            zktStar=rayTrace(x_t1,lasAngle,self.map)
+
+            p=self.zHit*self.pHit(zkt,zktStar)\
+            +self.zShort*self.pShort(zkt,zktStar)\
             +self.zMax*self.pMax(zkt)\
             +self.zRand*self.pRand(zkt)
             p=p*q
