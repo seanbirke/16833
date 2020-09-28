@@ -69,7 +69,7 @@ def main():
     src_path_log = '../data/log/robotdata1.log'
 
     map_obj = MapReader(src_path_map)
-    occupancy_map = map_obj.get_map() 
+    occupancy_map = map_obj.get_map()
     logfile = open(src_path_log, 'r')
 
     motion_model = MotionModel()
@@ -89,6 +89,7 @@ def main():
 
     first_time_idx = True
     for time_idx, line in enumerate(logfile):
+        print(time_idx,line)
 
         # Read a single 'line' from the log file (can be either odometry or laser measurement)
         meas_type = line[0] # L : laser scan measurement, O : odometry measurement
@@ -97,7 +98,7 @@ def main():
         odometry_robot = meas_vals[0:3] # odometry reading [x, y, theta] in odometry frame
         time_stamp = meas_vals[-1]
 
-        # if ((time_stamp <= 0.0) | (meas_type == "O")): # ignore pure odometry measurements for now (faster debugging) 
+        # if ((time_stamp <= 0.0) | (meas_type == "O")): # ignore pure odometry measurements for now (faster debugging)
             # continue
 
         if (meas_type == "L"):
@@ -113,7 +114,8 @@ def main():
 
         X_bar_new = np.zeros( (num_particles,4), dtype=np.float64)
         u_t1 = odometry_robot
-        for m in range(0, num_particles):
+        # X_bar.shape[0] (length) decreases from 500 to 499 after time step 1
+        for m in range(0, X_bar.shape[0]):
 
             """
             MOTION MODEL

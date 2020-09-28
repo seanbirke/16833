@@ -18,7 +18,7 @@ class SensorModel:
 
         self.map=occupancy_map
         #note: adjust these later
-        self.stdDevHit=0.01
+        self.stdDevHit=1
         self.lambdaShort=0.01
         self.measureMax=8191
         self.zHit=0.25
@@ -28,11 +28,13 @@ class SensorModel:
 
     def pHit(self,zkt,xt,xtLaser):
         if 0<=zkt and zkt<=self.measureMax:
-            #normalizer is cdf of the norm
             zktStar = rayTrace(xtLaser,self.map)
-            zVal=float(zkt-zktStar)/self.stdDevHit
-            normalizer=1/norm.cdf(zVal)
-            return normalizer*norm.pdf(zVal)
+            cdf = norm.cdf(zkt, loc=zktStar, scale=self.stdDevHit)
+            # if cdf is zero, zkt is far from zktStar, probability is ~0
+            if cdf == 0:
+                return 0
+            normalizer = 1/cdf
+            return normalizer * norm.pdf(zkt, loc=zktStar, scale=self.stdDevHit)
         return 0
 
     def pShort(self,zkt,xt,xtLaser):
