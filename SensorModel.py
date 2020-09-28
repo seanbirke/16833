@@ -7,6 +7,9 @@ import pdb
 from MapReader import MapReader
 from rayTrace import rayTrace
 
+def adjuster(reading,adj,angle):
+    return math.sqrt(reading**2 + adj**2-2*reading*adj*math.cos(angle))
+
 class SensorModel:
 
     """
@@ -26,17 +29,22 @@ class SensorModel:
         self.zMax=0.25
         self.zRand=0.25
 
-    def pHit(self,zkt,xt,xtLaser):
+
+    def pHit(self,zkt,xt,laserAngle):
         if 0<=zkt and zkt<=self.measureMax:
             #normalizer is cdf of the norm
-            zktStar = rayTrace(xtLaser,self.map)
+            zktStar = rayTrace(xt,laserAngle,self.map)
+            cdf=norm.cdf(zkt,loc=zktStar,scale=self.stdDevHit)
+            #if cdf is zero, zkt is far from zktStar, probability is ~0
+            if cdf == 0:
+                return 0
+            normalizer=1/cdf
             zVal=float(zkt-zktStar)/self.stdDevHit
-            normalizer=1/norm.cdf(zVal)
-            return normalizer*norm.pdf(zVal)
+            return normalizer*norm.pdf(zVal,loc=zktStar,scale=self.stdDevHit)
         return 0
 
-    def pShort(self,zkt,xt,xtLaser):
-        zktStar=rayTrace(xtLaser,self.map)
+    def pShort(self,zkt,xt,laserAngle):
+        zktStar=rayTrace(xt,laserAngle,self.map)
         if 0<=zkt and zkt<=zktStar:
             n=1.0/(1-math.exp(-self.lambdaShort*zktStar))
             return n*self.lambdaShort*math.exp(-self.lambdaShort*zkt)
@@ -58,21 +66,16 @@ class SensorModel:
         param[in] x_t1 : particle state belief [x, y, theta] at time t [world_frame]
         param[out] prob_zt1 : likelihood of a range scan zt1 at time t
         """
-        xRobot=z_t1_arr[1]
-        yRobot=z_t1_arr[2]
-        thRobot=z_t1_arr[3]
-        xLaser=z_t1_arr[4]
-        yLaser=z_t1_arr[5]
-        thLaser=z_t1_arr[6]
         q=1
 
-        for k in range(7,187):
-            #compute zkt
-            zkt=z_t1_arr[k]
-            xt=[xRobot,yRobot,thRobot-math.pi/2+(k-7)*math.pi/180]
-            xtLaser = [xLaser,yLaser,thLaser-math.pi/2+(k-7)*math.pi/180]
-            p=self.zHit*self.pHit(zkt,xt,xtLaser)\
-            +self.zShort*self.pShort(zkt,xt,xtLaser)\
+        for k in range(1,180):
+
+            #same position but changed for laser
+            lasAngle=-math.pi/2+k*math.pi/180
+            #compute zkt; adjust for laser position
+            zkt=adjuster(z_t1_arr[k],25,abs(lasAngle))
+            p=self.zHit*self.pHit(zkt,x_t1,lasAngle)\
+            +self.zShort*self.pShort(zkt,x_t1,lasAngle)\
             +self.zMax*self.pMax(zkt)\
             +self.zRand*self.pRand(zkt)
             p=p*q

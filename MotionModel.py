@@ -20,7 +20,7 @@ class MotionModel:
 
     def update(self, u_t0, u_t1, x_t0):
         """
-        param[in] u_t0 : particle state odometry reading [x, y, theta] at time (t-1) [odometry_frame]   
+        param[in] u_t0 : particle state odometry reading [x, y, theta] at time (t-1) [odometry_frame]
         param[in] u_t1 : particle state odometry reading [x, y, theta] at time t [odometry_frame]
         param[in] x_t0 : particle state belief [x, y, theta] at time (t-1) [world_frame]
         param[out] x_t1 : particle state belief [x, y, theta] at time t [world_frame]
