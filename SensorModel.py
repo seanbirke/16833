@@ -32,6 +32,7 @@ class SensorModel:
 
     def pHit(self,zkt,xt,laserAngle):
         if 0<=zkt and zkt<=self.measureMax:
+
             zktStar = rayTrace(xt,laserAngle,self.map)
             cdf = norm.cdf(zkt, loc=zktStar, scale=self.stdDevHit)
             # if cdf is zero, zkt is far from zktStar, probability is ~0
