@@ -113,10 +113,7 @@ def main():
 
         X_bar_new = np.zeros( (num_particles,4), dtype=np.float64)
         u_t1 = odometry_robot
-<<<<<<< HEAD
-=======
         # X_bar.shape[0] (length) decreases from 500 to 499 after time step 1
->>>>>>> 42435ce08802e599c97c9ab509fe4878100df70a
         for m in range(0, X_bar.shape[0]):
 
             """
