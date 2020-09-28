@@ -89,7 +89,6 @@ def main():
 
     first_time_idx = True
     for time_idx, line in enumerate(logfile):
-        print(time_idx,line)
 
         # Read a single 'line' from the log file (can be either odometry or laser measurement)
         meas_type = line[0] # L : laser scan measurement, O : odometry measurement
