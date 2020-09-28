@@ -6,7 +6,7 @@ import math
 #also adjusts for the ~25cm offset from the actual robot position
 def adjuster(reading,adj,angle):
     return math.sqrt(reading**2 + adj**2-2*reading*adj*math.cos(angle))
-def rayTrace(pos,lAngle,oMap):
+def rayTrace(pos,lAngle,oMap,certainty):
     #find current block in map
     adj=25
     laserTheta=pos[2]+lAngle
@@ -20,7 +20,7 @@ def rayTrace(pos,lAngle,oMap):
     #initialize rayPos, position of ray in xy
     rayPos=[pos[0],pos[1],laserTheta]
     #position in map coordinates
-    mapPos=[int(rayPos[0])/10,int(rayPos[1])/10,laserTheta]
+    mapPos=[int(rayPos[0]/10),int(rayPos[1]/10),laserTheta]
     #length of ray to next x or y side
     sideDistX=0
     sideDistY=0
@@ -42,23 +42,23 @@ def rayTrace(pos,lAngle,oMap):
         sideDistX=(mapPos[1]*10-rayPos[1]+10)*deltaDist[1];
     maxX=oMap.shape[0]*10
     maxY=oMap.shape[1]*10
-    withinX = rayPos[0] > 0 and mapPos[0] < oMap.shape[0]
-    withinY = mapPos[0]>=0 and mapPos[0] < oMap.shape[1]
-    notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < 0)
+    withinX = mapPos[0] >= 0 and mapPos[0] < oMap.shape[0]
+    withinY = mapPos[1]>=0 and mapPos[1] < oMap.shape[1]
+    notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < certainty)
 
     while(withinX and withinY and notWall):
         #jump to next map square or in x-dir or in y-dir
         if sideDistX<sideDistY:
-            sideDistX+=deltaDistX
+            sideDistX+=deltaDist[0]
             mapPos[0]+=stepX
             side=0
         else:
-            sideDistY+=deltaDistY
+            sideDistY+=deltaDist[1]
             mapPos[1]+=stepY
             side=1
-        withinX = rayPos[0] > 0 and mapPos[0] < oMap.shape[0]
-        withinY = mapPos[0]>=0 and mapPos[0] < oMap.shape[1]
-        notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < 0)
+        withinX = mapPos[0] >= 0 and mapPos[0] < oMap.shape[0]
+        withinY = mapPos[1]>=0 and mapPos[1] < oMap.shape[1]
+        notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < certainty)
 
     readingLen=sideDistX
     if side==1:

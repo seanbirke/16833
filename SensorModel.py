@@ -24,11 +24,11 @@ class SensorModel:
         self.stdDevHit=1
         self.lambdaShort=0.01
         self.measureMax=8191
-        self.zHit=0.25
-        self.zShort=0.25
-        self.zMax=0.25
-        self.zRand=0.25
-
+        self.zHit=0.7
+        self.zShort=0.2
+        self.zMax=0.05
+        self.zRand=0.05
+        self.certainty=0.9
 
     def pHit(self,zkt,zktStar):
         if 0<=zkt and zkt<=self.measureMax:
@@ -65,7 +65,7 @@ class SensorModel:
         #initial check to see if x_t1 is in a wall; if so then we don't
         #need to run rayTrace.
         inWall=False
-        if self.oMap[int(x_t1[1])/10][int(x_t1[0])/10]<0:
+        if self.oMap[int(x_t1[1]/10)][int(x_t1[0]/10)]>=self.certainty:
             inWall=True
         q=1
 
@@ -78,13 +78,13 @@ class SensorModel:
             #compute zktStar estimate using ray tracing
             zktStar=0
             if not inWall:
-                zktStar=rayTrace(x_t1,lasAngle,self.oMap)
+                zktStar=rayTrace(x_t1,lasAngle,self.oMap,self.certainty)
 
             p=self.zHit*self.pHit(zkt,zktStar)\
             +self.zShort*self.pShort(zkt,zktStar)\
             +self.zMax*self.pMax(zkt)\
             +self.zRand*self.pRand(zkt)
-            p=p*q
+            q=q*p
 
         return q
 
