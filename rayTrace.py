@@ -6,7 +6,7 @@ import math
 #also adjusts for the ~25cm offset from the actual robot position
 def adjuster(reading,adj,angle):
     return math.sqrt(reading**2 + adj**2-2*reading*adj*math.cos(angle))
-def rayTrace(pos,lAngle,map):
+def rayTrace(pos,lAngle,oMap):
     #find current block in map
     adj=25
     laserTheta=pos[2]+lAngle
@@ -40,11 +40,11 @@ def rayTrace(pos,lAngle,map):
     else:
         stepX=1
         sideDistX=(mapPos[1]*10-rayPos[1]+10)*deltaDist[1];
-    maxX=map.shape[0]*10
-    maxY=map.shape[1]*10
-    withinX = rayPos[0] > 0 and mapPos[0] < map.shape[0]
-    withinY = mapPos[0]>=0 and mapPos[0] < map.shape[1]
-    notWall = (withinX and withinY and map[mapPos[1]][mapPos[0]] < 0)
+    maxX=oMap.shape[0]*10
+    maxY=oMap.shape[1]*10
+    withinX = rayPos[0] > 0 and mapPos[0] < oMap.shape[0]
+    withinY = mapPos[0]>=0 and mapPos[0] < oMap.shape[1]
+    notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < 0)
 
     while(withinX and withinY and notWall):
         #jump to next map square or in x-dir or in y-dir
@@ -56,9 +56,9 @@ def rayTrace(pos,lAngle,map):
             sideDistY+=deltaDistY
             mapPos[1]+=stepY
             side=1
-        withinX = rayPos[0] > 0 and mapPos[0] < map.shape[0]
-        withinY = mapPos[0]>=0 and mapPos[0] < map.shape[1]
-        notWall = (withinX and withinY and map[mapPos[1]][mapPos[0]] < 0)
+        withinX = rayPos[0] > 0 and mapPos[0] < oMap.shape[0]
+        withinY = mapPos[0]>=0 and mapPos[0] < oMap.shape[1]
+        notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < 0)
 
     readingLen=sideDistX
     if side==1:

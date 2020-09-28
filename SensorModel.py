@@ -19,7 +19,7 @@ class SensorModel:
 
     def __init__(self, occupancy_map):
 
-        self.map=occupancy_map
+        self.oMap=occupancy_map
         #note: adjust these later
         self.stdDevHit=1
         self.lambdaShort=0.01
@@ -62,6 +62,11 @@ class SensorModel:
         param[in] x_t1 : particle state belief [x, y, theta] at time t [world_frame]
         param[out] prob_zt1 : likelihood of a range scan zt1 at time t
         """
+        #initial check to see if x_t1 is in a wall; if so then we don't
+        #need to run rayTrace.
+        inWall=False
+        if self.oMap[int(x_t1[1])/10][int(x_t1[0])/10]<0:
+            inWall=True
         q=1
 
         for k in range(1,180):
@@ -71,7 +76,9 @@ class SensorModel:
             #compute zkt; adjust for laser position
             zkt=adjuster(z_t1_arr[k],25,abs(lasAngle))
             #compute zktStar estimate using ray tracing
-            zktStar=rayTrace(x_t1,lasAngle,self.map)
+            zktStar=0
+            if not inWall:
+                zktStar=rayTrace(x_t1,lasAngle,self.oMap)
 
             p=self.zHit*self.pHit(zkt,zktStar)\
             +self.zShort*self.pShort(zkt,zktStar)\
