@@ -43,7 +43,7 @@ class Resampling:
         c = X_bar[0,3]
 
         i = 0
-        for m in range(1, M):
+        for m in range(1, M+1):
             U = r + (m - 1) * (1/M)
             while U > c:
                 i += 1
