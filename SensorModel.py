@@ -67,8 +67,9 @@ class SensorModel:
         inWall=False
         if self.oMap[int(x_t1[1]/10)][int(x_t1[0]/10)]>=self.certainty:
             inWall=True
-        q=1
-
+        #q is for now represented by  ln(q), so q=e
+        q=0
+        #want: q=log(p1)+log(p2)+log(p3)+log(p4)
         for k in range(1,180):
 
             #same position but changed for laser
@@ -84,7 +85,8 @@ class SensorModel:
             +self.zShort*self.pShort(zkt,zktStar)\
             +self.zMax*self.pMax(zkt)\
             +self.zRand*self.pRand(zkt)
-            q=q*p
+            #q=log(p1)+log(p2)+...
+            q=q+math.log(p)
 
         return q
 
