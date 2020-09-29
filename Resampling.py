@@ -36,7 +36,8 @@ class Resampling:
         X_bar_resampled = []
 
         # Normalize weights on (0,1)
-        X_bar[:,3] = X_bar[:,3]/np.sum(X_bar[:,3])
+        if np.sum(X_bar[:,3]) != 0:
+            X_bar[:,3] = X_bar[:,3]/np.sum(X_bar[:,3])
 
         M = X_bar.shape[0]
         r = np.random.uniform(0,1/M)
