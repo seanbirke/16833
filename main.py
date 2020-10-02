@@ -1,7 +1,9 @@
 import numpy as np
 import sys
 import pdb
-from multiprocessing import Pool
+import multiprocessing
+import multiprocessing.pool
+from multiprocessing.pool import ThreadPool
 from MapReader import MapReader
 from MotionModel import MotionModel
 from SensorModel import SensorModel
@@ -10,6 +12,26 @@ from Resampling import Resampling
 from matplotlib import pyplot as plt
 from matplotlib import figure as fig
 import time
+#taken heavily from:
+#https://stackoverflow.com/questions/6974695/python-process-pool-non-daemonic
+#class NoDaemonProcess(multiprocessing.Process):
+#	#@property
+#	def _get_daemon(self):
+#		return false
+#	#@daemon.setter
+#	def _set_daemon(self,value):
+#		pass
+#	daemon=property(_get_daemon,_set_daemon)
+#class noDaemonContext(type(multiprocessing.get_context())):
+	#Process=NoDaemonProcess
+
+#class noDaemPool(multiprocessing.pool.Pool):
+#	def Process(self,*args,**kwds):
+#		proc=super(NoDaemPool,self).Process(*args,**kwds)
+#		proc.__class__=NoDaemonProcess
+	#def __init__(self,*args,**kwargs):
+		#kwargs['context']=NoDaemonContext()
+		#super(noDaemPool,self).__init__(*args,**kwargs)
 
 def visualize_map(occupancy_map):
 	fig = plt.figure()
@@ -88,7 +110,7 @@ def main():
 
 	first_time_idx = True
 	#initialize worker threads
-	p=Pool(15)
+	p=ThreadPool(15)
 	for time_idx, line in enumerate(logfile):
 		# Read a single 'line' from the log file (can be either odometry or laser measurement)
 		meas_type = line[0] # L : laser scan measurement, O : odometry measurement
