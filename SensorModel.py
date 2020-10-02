@@ -57,7 +57,7 @@ class SensorModel:
 		return 0
 
 	def pMax(self,zkt):
-		if zkt==self.measureMax:
+		if zkt>=self.measureMax:
 			return 1
 		return 0
 
