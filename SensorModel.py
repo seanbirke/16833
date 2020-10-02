@@ -1,7 +1,6 @@
 import numpy as np
 import math
 import time
-from multiprocessing import Pool
 from matplotlib import pyplot as plt
 from scipy.stats import norm
 import pdb
@@ -71,6 +70,9 @@ class SensorModel:
 			+self.zShort*self.pShort(zkt,zktStar)\
 			+self.zMax*self.pMax(zkt)\
 			+self.zRand*self.pRand(zkt)
+	#same as beam_range_finder_model but takes in a list imput
+	def par_beam_range_finder_model(self,l):
+		return self.beam_range_finder_model(l[0],l[1])
 	def beam_range_finder_model(self, z_t1_arr, x_t1):
 		"""
 		param[in] z_t1_arr : laser range readings [array of 180 values] at time t
@@ -87,7 +89,7 @@ class SensorModel:
 		#want: q=log(p1)+log(p2)+log(p3)+log(p4)
 		#spawn 180 workers
 		print("pooling")
-		poo=Pool(180)
+		poo=Pool(10)
 		#concatenate all inputs into a single list
 		print("staring")
 		pointRays=[[x_t1,(-math.pi/2+k*math.pi/180),
@@ -99,7 +101,7 @@ class SensorModel:
 		zktStarArr=poo.map(rayTrace,pointRays)
 		#adjust laser readings to more accurate distance to robot
 		zktArr=poo.map(adjusterL,zktRays)
-		zippedZs=[ [zktArr,zktStarArr] for k in range(180)]
+		zippedZs=[ [zktArr[k],zktStarArr[k]] for k in range(180)]
 		#calculate values of p, then perform logsum
 		q=logsum(poo.map(self.calcP,zippedZs))
 		print("done parallelizing")
