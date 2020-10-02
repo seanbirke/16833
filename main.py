@@ -50,8 +50,8 @@ def visualize_timestep(X_bar, tstep):
 def init_particles_random(num_particles, occupancy_map):
 
 	# initialize [x, y, theta] positions in world_frame for all particles
-	y0_vals = np.random.uniform( 3500, 4500, (num_particles, 1) )
-	x0_vals = np.random.uniform( 4000, 4700, (num_particles, 1) )
+	y0_vals = np.random.uniform( 0, 7000, (num_particles, 1) )
+	x0_vals = np.random.uniform( 3000, 7000, (num_particles, 1) )
 	theta0_vals = np.random.uniform( -3.14, 3.14, (num_particles, 1) )
 
 	# initialize weights for all particles
@@ -118,8 +118,8 @@ def main():
 		odometry_robot = meas_vals[0:3] # odometry reading [x, y, theta] in odometry frame
 		time_stamp = meas_vals[-1]
 
-		# if ((time_stamp <= 0.0) | (meas_type == "O")): # ignore pure odometry measurements for now (faster debugging)
-			# continue
+		if ((time_stamp <= 0.0) | (meas_type == "O")): # ignore pure odometry measurements for now (faster debugging)
+			continue
 
 		if (meas_type == "L"):
 			 odometry_laser = meas_vals[3:6] # [x, y, theta] coordinates of laser in odometry frame
