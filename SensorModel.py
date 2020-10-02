@@ -21,12 +21,12 @@ class SensorModel:
 
         self.oMap=occupancy_map
         #note: adjust these later
-        self.stdDevHit=500
+        self.stdDevHit=100
         self.lambdaShort=0.01
         self.measureMax=8191
-        self.zHit=0.8
+        self.zHit=0.7
         self.zShort=0.2
-        self.zMax=0
+        self.zMax=0.1
         self.zRand=0
 		#certainty defines threshold for assuming a grid is occupied
         self.certainty=0.9
@@ -72,7 +72,7 @@ class SensorModel:
         q=0
         #want: q=log(p1)+log(p2)+log(p3)+log(p4)
 
-        for k in range(1,180):
+        for k in range(1,180,5):
 
             #same position but changed for laser
             lasAngle=-math.pi/2+k*math.pi/180
@@ -88,7 +88,8 @@ class SensorModel:
             +self.zMax*self.pMax(zkt)\
             +self.zRand*self.pRand(zkt)
             #q=log(p1)+log(p2)+...
-            q=q+math.log(p)
+            if p != 0:
+                q=q+math.log(p)
         return q
 
 if __name__=='__main__':
