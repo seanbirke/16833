@@ -77,13 +77,13 @@ def rayTrace(pos,lAngle,oMap,certainty):
 		readingLen=sideDistY
 		if pside==0:
 			if deltaDist[0]==infty:
-				print(laserTheta)
+				#print(laserTheta)
 				readingLen=sideDistX
 			else:
 				readingLen=sideDistX-deltaDist[0]
 	elif pside==1:
 		if deltaDist[1]==infty:
-			print(laserTheta,deltaDist)
+			#print(laserTheta,deltaDist)
 			readingLen=sideDistY
 		else:
 			readingLen=sideDistY-deltaDist[1]
