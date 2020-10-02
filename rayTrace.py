@@ -1,5 +1,4 @@
 import math
-
 #code heavily based on work from lodev.org/cgtutor/raycasting.html
 #note: assumes map pixels are 10 cm
 #estimates distance to nearest surface by following traj of x until hitting surface in map
@@ -7,7 +6,11 @@ import math
 #also adjusts for the ~25cm offset from the actual robot position
 def adjuster(reading,adj,angle):
 	return math.sqrt(reading**2 + adj**2-2*reading*adj*math.cos(math.pi-angle))
-def rayTrace(pos,lAngle,oMap,certainty):
+def rayTrace(rayInfo):
+	pos=rayInfo[0]
+	lAngle=rayInfo[1]
+	oMap=rayInfo[2]
+	certainty=rayInfo[3]
 	#print("position:",pos,",lAngle=",lAngle)
 	#find current block in map
 	adj=25
