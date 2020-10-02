@@ -8,7 +8,7 @@ from MapReader import MapReader
 from rayTrace import rayTrace
 
 def adjuster(reading,adj,angle):
-    return math.sqrt(reading**2 + adj**2-2*reading*adj*math.cos(angle))
+    return math.sqrt(reading**2 + adj**2-2*reading*adj*math.cos(math.pi-angle))
 
 class SensorModel:
 
@@ -21,13 +21,14 @@ class SensorModel:
 
         self.oMap=occupancy_map
         #note: adjust these later
-        self.stdDevHit=1
+        self.stdDevHit=500
         self.lambdaShort=0.01
         self.measureMax=8191
-        self.zHit=0.7
+        self.zHit=0.8
         self.zShort=0.2
-        self.zMax=0.05
-        self.zRand=0.05
+        self.zMax=0
+        self.zRand=0
+		#certainty defines threshold for assuming a grid is occupied
         self.certainty=0.9
 
     def pHit(self,zkt,zktStar):
@@ -70,6 +71,7 @@ class SensorModel:
         #q is for now represented by  ln(q), so q=e
         q=0
         #want: q=log(p1)+log(p2)+log(p3)+log(p4)
+
         for k in range(1,180):
 
             #same position but changed for laser
@@ -87,7 +89,6 @@ class SensorModel:
             +self.zRand*self.pRand(zkt)
             #q=log(p1)+log(p2)+...
             q=q+math.log(p)
-
         return q
 
 if __name__=='__main__':
