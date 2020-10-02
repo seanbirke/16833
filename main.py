@@ -51,7 +51,6 @@ def init_particles_freespace(num_particles, occupancy_map):
 	return X_bar_init
 
 def main():
-
 	"""
 	Description of variables used
 	u_t0 : particle state odometry reading [x, y, theta] at time (t-1) [odometry_frame]
@@ -89,14 +88,11 @@ def main():
 
 	first_time_idx = True
 	#initialize worker threads
-	p=Pool(10)
-		
+	p=Pool(15)
 	for time_idx, line in enumerate(logfile):
-
 		# Read a single 'line' from the log file (can be either odometry or laser measurement)
 		meas_type = line[0] # L : laser scan measurement, O : odometry measurement
 		meas_vals = np.fromstring(line[2:], dtype=np.float64, sep=' ') # convert measurement values from string to double
-
 		odometry_robot = meas_vals[0:3] # odometry reading [x, y, theta] in odometry frame
 		time_stamp = meas_vals[-1]
 

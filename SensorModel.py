@@ -88,40 +88,40 @@ class SensorModel:
 		q=0
 		#want: q=log(p1)+log(p2)+log(p3)+log(p4)
 		#spawn 180 workers
-		print("pooling")
-		poo=Pool(10)
+		#print("pooling")
+		#poo=Pool(10)
 		#concatenate all inputs into a single list
-		print("staring")
-		pointRays=[[x_t1,(-math.pi/2+k*math.pi/180),
-					self.oMap,self.certainty] for k in range(180)]
-		zktRays=[ [z_t1_arr[k],25,
-					abs(-math.pi/2+k*math.pi/180)]for k in range(180)]
-		print("mapping")
+		#print("staring")
+		#pointRays=[[x_t1,(-math.pi/2+k*math.pi/180),
+		#			self.oMap,self.certainty] for k in range(180)]
+		#zktRays=[ [z_t1_arr[k],25,
+		#			abs(-math.pi/2+k*math.pi/180)]for k in range(180)]
+		#print("mapping")
 		#perform ray tracing on our position
-		zktStarArr=poo.map(rayTrace,pointRays)
+		#zktStarArr=poo.map(rayTrace,pointRays)
 		#adjust laser readings to more accurate distance to robot
-		zktArr=poo.map(adjusterL,zktRays)
-		zippedZs=[ [zktArr[k],zktStarArr[k]] for k in range(180)]
+		#zktArr=poo.map(adjusterL,zktRays)
+		#zippedZs=[ [zktArr[k],zktStarArr[k]] for k in range(180)]
 		#calculate values of p, then perform logsum
-		q=logsum(poo.map(self.calcP,zippedZs))
-		print("done parallelizing")
-		#for k in range(180):
+		#q=logsum(poo.map(self.calcP,zippedZs))
+		#print("done parallelizing")
+		for k in range(180):
 
 			#same position but changed for laser
-			#lasAngle=-math.pi/2+k*math.pi/180
+			lasAngle=-math.pi/2+k*math.pi/180
 			#compute zkt; adjust for laser position
-			#zkt=adjuster(z_t1_arr[k],25,abs(lasAngle))
+			zkt=adjuster(z_t1_arr[k],25,abs(lasAngle))
 			#compute zktStar estimate using ray tracing
-			#zktStar=25
-			#if not inWall:
-			#	zktStar=rayTrace([x_t1,lasAngle,self.oMap,self.certainty])
-			#p=self.zHit*self.pHit(zkt,zktStar)\
-			#+self.zShort*self.pShort(zkt,zktStar)\
-			#+self.zMax*self.pMax(zkt)\
-			#+self.zRand*self.pRand(zkt)
+			zktStar=25
+			if not inWall:
+				zktStar=rayTrace([x_t1,lasAngle,self.oMap,self.certainty])
+			p=self.zHit*self.pHit(zkt,zktStar)\
+			+self.zShort*self.pShort(zkt,zktStar)\
+			+self.zMax*self.pMax(zkt)\
+			+self.zRand*self.pRand(zkt)
 			#q=log(p1)+log(p2)+...
-			#q=q+math.log(p)
-		print(q)
+			q=q+math.log(p)
+		#print(q)
 		return q
 
 if __name__=='__main__':
