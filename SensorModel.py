@@ -29,10 +29,10 @@ class SensorModel:
 		self.oMap=occupancy_map
 		#note: adjust these later
 		self.stdDevHit=100
-		self.lambdaShort=1
-		self.measureMax=8191
-		self.zHit=0.6
-		self.zShort=0.2
+		self.lambdaShort=0.1
+		self.measureMax=8183
+		self.zHit=0.4
+		self.zShort=0.4
 		self.zMax=0.1
 		self.zRand=0.1
 		#certainty defines threshold for assuming a grid is occupied
@@ -126,9 +126,9 @@ class SensorModel:
 			if p!=0:
 				q=q+math.log(p)
 			else:
-				return float("inf")
-		print(q)
-		return q
+				return 0
+		#print(math.exp(q))
+		return math.exp(q)
 
 if __name__=='__main__':
 	pass
