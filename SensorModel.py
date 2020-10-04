@@ -31,14 +31,14 @@ class SensorModel:
 		self.stdDevHit=100
 		self.lambdaShort=0.1
 		self.measureMax=8183
-		self.zHit=0.4
-		self.zShort=0.4
-		self.zMax=0.1
-		self.zRand=0.1
+		self.zHit=0.9#0.4
+		self.zShort=0#0.4
+		self.zMax=0#0.1
+		self.zRand=0.1#0.1
 		#certainty defines threshold for assuming a grid is occupied
 		self.certainty=0.9
 		#laserSubsample defines laser sampling; every nth laser is sampled
-		self.laserSubsample=5
+		self.laserSubsample=3
 
 	def pHit(self,zkt,zktStar):
 		if 0<=zkt and zkt<=self.measureMax:
@@ -128,7 +128,7 @@ class SensorModel:
 			else:
 				#return 0
 				return -float("inf")
-		#print(math.exp(q))
+		print(q)
 		#print(x_t1)
 		return q
 		#return math.exp(q)
