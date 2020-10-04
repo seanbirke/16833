@@ -126,10 +126,12 @@ class SensorModel:
 			if p!=0:
 				q=q+math.log(p)
 			else:
-				return 0
+				#return 0
+				return -float("inf")
 		#print(math.exp(q))
-		print(x_t1)
-		return math.exp(q)
+		#print(x_t1)
+		return q
+		#return math.exp(q)
 
 if __name__=='__main__':
 	pass
