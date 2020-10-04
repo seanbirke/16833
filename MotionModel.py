@@ -11,10 +11,14 @@ class MotionModel:
 
 	def __init__(self):
 
-		self.alpha_1 = 1
-		self.alpha_2 = 1
-		self.alpha_3 = 1
-		self.alpha_4 = 1
+		# rot_1
+		self.alpha_1 = 0.01
+		# trans
+		self.alpha_2 = .75
+		# trans
+		self.alpha_3 = .75
+		# rot_1 + rot_2
+		self.alpha_4 = 0.01
 
 
 	def par_update(self,l):
