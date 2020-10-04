@@ -29,12 +29,12 @@ class SensorModel:
 		self.oMap=occupancy_map
 		#note: adjust these later
 		self.stdDevHit=100
-		self.lambdaShort=0.01
+		self.lambdaShort=1
 		self.measureMax=8191
-		self.zHit=0.7
+		self.zHit=0.6
 		self.zShort=0.2
 		self.zMax=0.1
-		self.zRand=0
+		self.zRand=0.1
 		#certainty defines threshold for assuming a grid is occupied
 		self.certainty=0.9
 		#laserSubsample defines laser sampling; every nth laser is sampled
@@ -127,7 +127,7 @@ class SensorModel:
 				q=q+math.log(p)
 			else:
 				return float("inf")
-		#print(q)
+		print(q)
 		return q
 
 if __name__=='__main__':
