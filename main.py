@@ -3,6 +3,7 @@ import sys
 import pdb
 import multiprocessing
 import multiprocessing.pool
+import random
 from multiprocessing.pool import ThreadPool
 from MapReader import MapReader
 from MotionModel import MotionModel
@@ -49,11 +50,31 @@ def visualize_timestep(X_bar, tstep):
 
 def init_particles_random(num_particles, occupancy_map):
 
-	# initialize [x, y, theta] positions in world_frame for all particles
-	y0_vals = np.random.uniform( 0, 7000, (num_particles, 1) )
-	x0_vals = np.random.uniform( 3000, 7000, (num_particles, 1) )
+	valid_x=[]
+	valid_y=[]
+	#find all valid unoccupied positions w/in the map
+	for i in range(occupancy_map.shape[0]):
+		for j in range(occupancy_map.shape[1]):
+			if occupancy_map[i][j]<0.1 and occupancy_map[i][j]>-1:
+				valid_x.append(j)
+				valid_y.append(i)
+	x0_vals=[]
+	y0_vals=[]
+	#randomly choose from the valid positions
+	if len(valid_x)>=num_particles:
+		indexes=range(len(valid_x))
+		selected=random.choices(indexes,k=num_particles)
+		
+		y0_vals=[[10*(valid_y[selected[i]])+np.random.random()*10] 
+				for i in range(num_particles)]
+		x0_vals=[[10*(valid_x[selected[i]])+np.random.random()*10] 
+				for i in range(num_particles)]
+	else:		
+		y0_vals = np.random.uniform( 0, 7000, (num_particles, 1) )
+		x0_vals = np.random.uniform( 3000, 7000, (num_particles, 1) )
+	#iniitialize angles for all particles
 	theta0_vals = np.random.uniform( -3.14, 3.14, (num_particles, 1) )
-
+	
 	# initialize weights for all particles
 	w0_vals = np.ones( (num_particles,1), dtype=np.float64)
 	#w0_vals = w0_vals / num_particles
