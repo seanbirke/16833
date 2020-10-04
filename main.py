@@ -76,6 +76,7 @@ def init_particles_random(num_particles, occupancy_map):
 	else:		
 		y0_vals = np.random.uniform( 0, 7000, (num_particles, 1) )
 		x0_vals = np.random.uniform( 3000, 7000, (num_particles, 1) )
+
 	#iniitialize angles for all particles
 	theta0_vals = np.random.uniform( -3.14, 3.14, (num_particles, 1) )
 	

@@ -128,6 +128,7 @@ class SensorModel:
 			else:
 				return 0
 		#print(math.exp(q))
+		print(x_t1)
 		return math.exp(q)
 
 if __name__=='__main__':
