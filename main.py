@@ -127,6 +127,12 @@ def main():
 
 	vis_flag = 1
 
+	print("a1: ",motion_model.alpha_1,"\na2: ",motion_model.alpha_2,"\na3: ",\
+		  motion_model.alpha_3,"\na4: ",motion_model.alpha_4,"\nstdv: ",sensor_model.stdDevHit, \
+	"\nlamd: ", sensor_model.lambdaShort,"\nzhit: ",sensor_model.zHit,"\nzsht: ",sensor_model.zShort, \
+	"\nzmax: ", sensor_model.zMax, "\nzrnd: ", sensor_model.zRand, "\ncert: ", sensor_model.certainty, \
+	"\nlsub: ", sensor_model.laserSubsample)
+
 	"""
 	Monte Carlo Localization Algorithm : Main Loop
 	"""
