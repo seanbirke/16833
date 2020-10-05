@@ -14,6 +14,7 @@ def rayTrace(rayInfo):
 	#print("position:",pos,",lAngle=",lAngle)
 	#find current block in map
 	adj=25
+	#adj=0
 	laserTheta=pos[2]+lAngle
 	rayDirX=math.cos(laserTheta)
 	rayDirY=math.sin(laserTheta)
@@ -22,14 +23,13 @@ def rayTrace(rayInfo):
 	eps=0.0001
 	res=10
 	if abs(rayDirX)>eps:
-		deltaDist[0]=abs(1/rayDirX)*res
+		deltaDist[0]=abs(1/rayDirX)
 	if abs(rayDirY)>eps:
-		deltaDist[1]=abs(1/rayDirY)*res
-	res=10
+		deltaDist[1]=abs(1/rayDirY)
 	#initialize rayPos, position of ray in xy
-	rayPos=[pos[0],pos[1],laserTheta]
+	rayPos=[pos[0]/res,pos[1]/res,laserTheta]
 	#position in map coordinates
-	mapPos=[int(rayPos[0]/res),int(rayPos[1]/res),laserTheta]
+	mapPos=[int(rayPos[0]),int(rayPos[1]),laserTheta]
 	#length of ray to next x or y side
 	sideDistX=0
 	sideDistY=0
@@ -39,18 +39,16 @@ def rayTrace(rayInfo):
 	side=0
 	if rayDirX<0:
 		stepX=-1
-		sideDistX=(rayPos[0]-mapPos[0]*res)*deltaDist[0]/res;
+		sideDistX=(rayPos[0]-mapPos[0])*deltaDist[0];
 	else:
 		stepX=1
-		sideDistX=(mapPos[0]*res-rayPos[0]+res)*deltaDist[0]/res;
+		sideDistX=(mapPos[0]-rayPos[0]+1)*deltaDist[0];
 	if rayDirY<0:
 		stepY=-1
-		sideDistY=(rayPos[1]-mapPos[1]*res)*deltaDist[1]/res;
+		sideDistY=(rayPos[1]-mapPos[1])*deltaDist[1];
 	else:
-		stepX=1
-		sideDistY=(mapPos[1]*res-rayPos[1]+res)*deltaDist[1]/res;
-	pside=side
-	#print("sideDistX=",sideDistX,"sideDistY=",sideDistY,"deltaDist=",deltaDist)
+		stepY=1
+		sideDistY=(mapPos[1]-rayPos[1]+1)*deltaDist[1];
 	maxX=oMap.shape[0]
 	maxY=oMap.shape[1]
 	#maxX=len(oMap[0])
@@ -59,7 +57,6 @@ def rayTrace(rayInfo):
 	withinY = mapPos[1]>=0 and mapPos[1] < maxY
 	notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < certainty)
 	while(withinX and withinY and notWall):
-		#print("loop; mapPos=",mapPos,", (sdX,sdY)=",sideDistX,sideDistY)
 		#jump to next map square or in x-dir or in y-dir
 		if sideDistX<sideDistY:
 			sideDistX+=deltaDist[0]
@@ -75,32 +72,32 @@ def rayTrace(rayInfo):
 		withinY = mapPos[1]>=0 and mapPos[1] < maxY
 		notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < certainty)
 	#can find length of ray by determining the last valid sideDistX/Y
-	readingLen=sideDistX
+	perpWallDist=0
 	if side==0:
-		readingLen=sideDistY
-		if pside==0:
-			if deltaDist[0]==infty:
-				#print(laserTheta)
-				readingLen=sideDistX
-			else:
-				readingLen=sideDistX-deltaDist[0]
-	elif pside==1:
-		if deltaDist[1]==infty:
-			#print(laserTheta,deltaDist)
-			readingLen=sideDistY
-		else:
-			readingLen=sideDistY-deltaDist[1]
-
-	#print(withinX,withinY,notWall,mapPos,readingLen)
+		perpWallDist=(mapPos[0]-rayPos[0] + (1-stepX)/2)/rayDirX
+	else:
+		perpWallDist=(mapPos[1]-rayPos[1] + (1-stepY)/2)/rayDirY
 	#return ray length, with 25cm adjustment for laser
-	finalLen=adjuster(readingLen,adj,abs(lAngle))
-	#print(finalLen,withinX,withinY,notWall)
+	#finalLen=adjuster(perpWallDist*10,adj,abs(lAngle))
+	finalLen=perpWallDist*10
 	return finalLen
-
-#m=[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1],[1,0,0,0,0,0,1]]
-#p=[11,15,0.7854]
-#p=[11,15,0]
-#lAng=0
-#certain=0.2
-#rRes=rayTrace(p,lAng,m,certain)
-#print(rRes)
+#import matplotlib.pyplot as plt
+#m=[\
+#[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\
+#[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],\
+#[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],\
+#[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],\
+#[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+#l=range(360)
+#d=[0]*360
+#l=[15]
+#d=[0]
+#for i in range(len(l)):
+#	lAng=l[i]*2*math.pi/360
+#	p=[105,15,0]
+#	certain=0.2
+#	rRes=rayTrace([p,lAng,m,certain])
+#	d[i]=rRes
+#	print("degree=",i," at rads ",lAng,"distance is ",rRes)
+#plt.scatter(l,d)
+#plt.show()
