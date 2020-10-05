@@ -12,13 +12,15 @@ class MotionModel:
 	def __init__(self):
 
 		# rot_1
-		self.alpha_1 = 0.1
+		self.alpha_1 = 0.01
 		# trans
-		self.alpha_2 = 10
+		self.alpha_2 = 0.1
 		# trans
-		self.alpha_3 = 10
+		self.alpha_3 = 1
 		# rot_1 + rot_2
-		self.alpha_4 = 10
+		self.alpha_4 = 0.001
+
+		self.rot_div = 50
 
 
 	def par_update(self,l):
@@ -31,20 +33,34 @@ class MotionModel:
 		param[out] x_t1 : particle state belief [x, y, theta] at time t [world_frame]
 
 		"""
+		if abs(u_t1[0] - u_t0[0]) < 0.01 and abs(u_t1[1] - u_t0[1]) < 0.01 and abs(u_t1[2] - u_t0[2]) < 0.0001:
+			x_t1 = x_t0
+			return x_t1
 
 		d_rot1 = math.atan2(u_t1[1] - u_t0[1], u_t1[0] - u_t0[0]) - u_t0[2]
 		d_trans = math.sqrt((u_t0[0] - u_t1[0])**2 + (u_t0[1] - u_t1[1])**2)
 		d_rot2 = u_t1[2] - u_t0[2] - d_rot1
 
-		dh_rot1 = d_rot1 - np.random.normal(scale = (self.alpha_1 * d_rot1**2 + self.alpha_2 * d_trans**2))
+		dh_rot1 = d_rot1 - np.random.normal(scale = (self.alpha_1 * d_rot1**2 + self.alpha_2 * d_trans**2)/self.rot_div)
 		dh_trans = d_trans - np.random.normal(scale = (self.alpha_3 * d_trans**2 + self.alpha_4 * (d_rot1**2 + d_rot2**2)))
-		dh_rot2 = d_rot2 - np.random.normal(scale = (self.alpha_1 * d_rot2**2 + self.alpha_2 * d_trans**2))
+		dh_rot2 = d_rot2 - np.random.normal(scale = (self.alpha_1 * d_rot2**2 + self.alpha_2 * d_trans**2)/self.rot_div)
+
+		# print(d_rot1, d_trans, d_rot2)
+		# print(u_t0)
+		# print(u_t1)
+		# print( (self.alpha_1 * d_rot1**2 + self.alpha_2 * d_trans**2)/self.rot_div, \
+		# 	   (self.alpha_3 * d_trans**2 + self.alpha_4 * (d_rot1**2 + d_rot2**2)), \
+		# 	   (self.alpha_1 * d_rot2**2 + self.alpha_2 * d_trans**2)/self.rot_div )
+
 
 		x_p = x_t0[0] + dh_trans * math.cos(x_t0[2] + dh_rot1)
 		y_p = x_t0[1] + dh_trans * math.sin(x_t0[2] + dh_rot1)
 		theta_p = x_t0[2] + dh_rot1 + dh_rot2
 
+		# print(d_rot1, d_rot2, dh_rot1, dh_rot2, theta_p)
+
 		x_t1 = [x_p, y_p, theta_p]
+		# print(x_t0[2], x_t1[2])
 
 		return x_t1
 
