@@ -28,17 +28,17 @@ class SensorModel:
 
 		self.oMap=occupancy_map
 		#note: adjust these later
-		self.stdDevHit=100
-		self.lambdaShort=0.001
+		self.stdDevHit=20
+		self.lambdaShort=0.01
 		self.measureMax=8000
-		self.zHit=0.3#0.4
+		self.zHit=0.0001#0.4
 		self.zShort=0#0.4
-		self.zMax=0.1#0.1
-		self.zRand=0.6#0.1
+		self.zMax=0#0.1
+		self.zRand=0.9999#0.1
 		#certainty defines threshold for assuming a grid is occupied
-		self.certainty=0.9
+		self.certainty=0.1
 		#laserSubsample defines laser sampling; every nth laser is sampled
-		self.laserSubsample=3
+		self.laserSubsample=5
 
 	def pHit(self,zkt,zktStar):
 		if 0<=zkt and zkt<=self.measureMax:
@@ -118,6 +118,7 @@ class SensorModel:
 			zktStar=25
 			if not inWall:
 				zktStar=rayTrace([x_t1,lasAngle,self.oMap,self.certainty])
+				#print(k,zkt,zktStar)
 			p=self.zHit*self.pHit(zkt,zktStar)\
 			+self.zShort*self.pShort(zkt,zktStar)\
 			+self.zMax*self.pMax(zkt)\
@@ -129,7 +130,7 @@ class SensorModel:
 			else:
 				#return 0
 				return -float("inf")
-		#print(q)
+		#print("q is",q)
 		#print(x_t1)
 		return q
 		#return math.exp(q)

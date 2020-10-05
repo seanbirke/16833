@@ -40,6 +40,7 @@ class Resampling:
 			X_bar[:,3] = X_bar[:,3]/np.sum(X_bar[:,3])
 		else:
 			X_bar[:,3]=1.0/len(X_bar[:,3])
+		print
 		M = X_bar.shape[0]
 		r = np.random.uniform(0,1/M)
 		c = X_bar[0,3]
@@ -51,7 +52,11 @@ class Resampling:
 				i += 1
 				c += X_bar[i,3]
 			X_bar_resampled.append(X_bar[i])
-
+		#for i in range(1,len(X_bar_resampled)):
+		#	xPrev=X_bar_resampled[i-1]
+		#	x=X_bar_resampled[i]
+		#	if abs((xPrev[0]-x[0])**2+(xPrev[1]-x[1])**2+(xPrev[2]-x[2])**2)>0.1:
+		#		print("is different")
 		return np.array(X_bar_resampled)
 
 if __name__ == "__main__":
