@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "deleting previous files, if any"
+rm ./gifPics/*
+python3 main.py
+
