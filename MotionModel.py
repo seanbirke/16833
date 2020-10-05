@@ -16,11 +16,11 @@ class MotionModel:
 		# trans
 		self.alpha_2 = 0.1
 		# trans
-		self.alpha_3 = 1
+		self.alpha_3 = 3
 		# rot_1 + rot_2
 		self.alpha_4 = 0.001
 
-		self.rot_div = 50
+		self.rot_div = 1
 
 
 	def par_update(self,l):
@@ -45,22 +45,11 @@ class MotionModel:
 		dh_trans = d_trans - np.random.normal(scale = (self.alpha_3 * d_trans**2 + self.alpha_4 * (d_rot1**2 + d_rot2**2)))
 		dh_rot2 = d_rot2 - np.random.normal(scale = (self.alpha_1 * d_rot2**2 + self.alpha_2 * d_trans**2)/self.rot_div)
 
-		# print(d_rot1, d_trans, d_rot2)
-		# print(u_t0)
-		# print(u_t1)
-		# print( (self.alpha_1 * d_rot1**2 + self.alpha_2 * d_trans**2)/self.rot_div, \
-		# 	   (self.alpha_3 * d_trans**2 + self.alpha_4 * (d_rot1**2 + d_rot2**2)), \
-		# 	   (self.alpha_1 * d_rot2**2 + self.alpha_2 * d_trans**2)/self.rot_div )
-
-
 		x_p = x_t0[0] + dh_trans * math.cos(x_t0[2] + dh_rot1)
 		y_p = x_t0[1] + dh_trans * math.sin(x_t0[2] + dh_rot1)
 		theta_p = x_t0[2] + dh_rot1 + dh_rot2
 
-		# print(d_rot1, d_rot2, dh_rot1, dh_rot2, theta_p)
-
 		x_t1 = [x_p, y_p, theta_p]
-		# print(x_t0[2], x_t1[2])
 
 		return x_t1
 

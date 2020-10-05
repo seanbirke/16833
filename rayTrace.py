@@ -11,10 +11,8 @@ def rayTrace(rayInfo):
 	lAngle=rayInfo[1]
 	oMap=rayInfo[2]
 	certainty=rayInfo[3]
-	#print("position:",pos,",lAngle=",lAngle)
 	#find current block in map
 	adj=25
-	#adj=0
 	laserTheta=pos[2]+lAngle
 	rayDirX=math.cos(laserTheta)
 	rayDirY=math.sin(laserTheta)
@@ -51,8 +49,6 @@ def rayTrace(rayInfo):
 		sideDistY=(mapPos[1]-rayPos[1]+1)*deltaDist[1];
 	maxX=oMap.shape[0]
 	maxY=oMap.shape[1]
-	#maxX=len(oMap[0])
-	#maxY=len(oMap)
 	withinX = mapPos[0] >= 0 and mapPos[0] < maxX
 	withinY = mapPos[1]>=0 and mapPos[1] < maxY
 	notWall = (withinX and withinY and oMap[mapPos[1]][mapPos[0]] < certainty)
@@ -78,9 +74,10 @@ def rayTrace(rayInfo):
 	else:
 		perpWallDist=(mapPos[1]-rayPos[1] + (1-stepY)/2)/rayDirY
 	#return ray length, with 25cm adjustment for laser
-	#finalLen=adjuster(perpWallDist*10,adj,abs(lAngle))
-	finalLen=perpWallDist*10
+	finalLen=adjuster(perpWallDist*10,adj,abs(lAngle))
 	return finalLen
+#
+#debugging code, ignore
 #import matplotlib.pyplot as plt
 #m=[\
 #[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],\

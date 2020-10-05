@@ -90,24 +90,6 @@ class SensorModel:
 		#q is for now represented by  ln(q), so q=e
 		q=0
 		#want: q=log(p1)+log(p2)+log(p3)+log(p4)
-		#spawn 180 workers
-		#print("pooling")
-		#poo=ThreadPool(10)
-		#concatenate all inputs into a single list
-		#print("staring")
-		#pointRays=[[x_t1,(-math.pi/2+k*math.pi/180),
-		#			self.oMap,self.certainty] for k in range(0,180,self.laserSubsample)]
-		#zktRays=[ [z_t1_arr[k],25,
-		#			abs(-math.pi/2+k*math.pi/180)]for k in range(0,180,self.laserSubsample)]
-		#print("mapping")
-		#perform ray tracing on our position
-		#zktStarArr=poo.map(rayTrace,pointRays)
-		#adjust laser readings to more accurate distance to robot
-		#zktArr=poo.map(adjusterL,zktRays)
-		#zippedZs=[ [zktArr[k],zktStarArr[k]] for k in range(len(zktArr))]
-		#calculate values of p, then perform logsum
-		#q=logsum(poo.map(self.calcP,zippedZs))
-		#print("done parallelizing")
 		for k in range(0,180,self.laserSubsample):
 
 			#same position but changed for laser
@@ -118,22 +100,15 @@ class SensorModel:
 			zktStar=25
 			if not inWall:
 				zktStar=rayTrace([x_t1,lasAngle,self.oMap,self.certainty])
-				#print(k,zkt,zktStar)
 			p=self.zHit*self.pHit(zkt,zktStar)\
 			+self.zShort*self.pShort(zkt,zktStar)\
 			+self.zMax*self.pMax(zkt)\
 			+self.zRand*self.pRand(zkt)
-			#q=log(p1)+log(p2)+..
-			#print("pHit=",self.pHit(zkt,zktStar),", pShort=",self.pShort(zkt,zktStar),", pMax=",self.pMax(zkt))
 			if p!=0:
 				q=q+math.log(p)
 			else:
-				#return 0
 				return -float("inf")
-		#print("q is",q)
-		#print(x_t1)
 		return q
-		#return math.exp(q)
 
 if __name__=='__main__':
 	pass
