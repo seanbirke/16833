@@ -12,15 +12,15 @@ class MotionModel:
 	def __init__(self):
 
 		# rot_1
-		self.alpha_1 = 0.01
+		self.alpha_1 = 0#.05
 		# trans
-		self.alpha_2 = 0.1
+		self.alpha_2 = 0#0.001
 		# trans
-		self.alpha_3 = 1
+		self.alpha_3 = 0#1
 		# rot_1 + rot_2
-		self.alpha_4 = 0.001
+		self.alpha_4 =0#0.001
 
-		self.rot_div = 50
+		self.rot_div = 1
 
 
 	def par_update(self,l):
@@ -33,9 +33,9 @@ class MotionModel:
 		param[out] x_t1 : particle state belief [x, y, theta] at time t [world_frame]
 
 		"""
-		if abs(u_t1[0] - u_t0[0]) < 0.01 and abs(u_t1[1] - u_t0[1]) < 0.01 and abs(u_t1[2] - u_t0[2]) < 0.0001:
-			x_t1 = x_t0
-			return x_t1
+		#if abs(u_t1[0] - u_t0[0]) < 0.01 and abs(u_t1[1] - u_t0[1]) < 0.01 and abs(u_t1[2] - u_t0[2]) < 0.0001:
+		#	x_t1 = x_t0
+		#	return x_t1
 
 		d_rot1 = math.atan2(u_t1[1] - u_t0[1], u_t1[0] - u_t0[0]) - u_t0[2]
 		d_trans = math.sqrt((u_t0[0] - u_t1[0])**2 + (u_t0[1] - u_t1[1])**2)

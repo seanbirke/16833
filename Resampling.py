@@ -39,8 +39,8 @@ class Resampling:
 		if np.sum(X_bar[:,3]) != 0:
 			X_bar[:,3] = X_bar[:,3]/np.sum(X_bar[:,3])
 		else:
+			print("weights are all zeros")
 			X_bar[:,3]=1.0/len(X_bar[:,3])
-		print
 		M = X_bar.shape[0]
 		r = np.random.uniform(0,1/M)
 		c = X_bar[0,3]

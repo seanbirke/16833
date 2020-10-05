@@ -13,6 +13,7 @@ from Resampling import Resampling
 from matplotlib import pyplot as plt
 from matplotlib import figure as fig
 import time
+from rayTrace import rayTrace
 #taken heavily from:
 #https://stackoverflow.com/questions/6974695/python-process-pool-non-daemonic
 #class NoDaemonProcess(multiprocessing.Process):
@@ -41,15 +42,57 @@ def visualize_map(occupancy_map):
 	plt.ion(); plt.imshow(occupancy_map, cmap='Greys'); plt.axis([0, 800, 0, 800]);
 
 
-def visualize_timestep(X_bar, tstep):
+def visualize_timestep(X_bar, tstep,imgPath):
 	x_locs = X_bar[:,0]/10.0
 	y_locs = X_bar[:,1]/10.0
 	dx=list(map(math.cos,X_bar[:,2]))
 	dy=list(map(math.sin,X_bar[:,2]))
-	#scat = plt.scatter(x_locs, y_locs, c='r', marker='o')
+	#scat = plt.scatter(x_locs, y_locs, c='r', marker='.')
 	scat=plt.quiver(x_locs,y_locs,dx,dy)
 	plt.pause(0.00001)
+	plt.savefig(imgPath)
 	scat.remove()
+
+def train_weights(sModel,logs,poses,m):
+	convCrit=1
+	while(convCrit>0.001):
+		print("convCrit=",convCrit)
+		eHit=0
+		eShort=0
+		eMax=0
+		eRand=0
+		eHitz=0
+		eShortz=0
+		zStarArr=[0]*180
+		for i in range(180):
+			lAng=(i-90)*math.pi/180
+			zStar=rayTrace([poses,lAng,m,0.3])
+			pH=sModel.pHit(logs[i],zStar)
+			pS=sModel.pShort(logs[i],zStar)
+			pM=sModel.pMax(logs[i])
+			pR=sModel.pRand(logs[i])
+			sumP=pH+pS+pM+pR
+			eHit+=pH/sumP
+			eShort+=pS/sumP
+			eMax+=pM/sumP
+			eRand+=pM/sumP
+			eHitz+=((logs[i]-zStar)**2)*pH/sumP
+			eShortz+=logs[i]*eShort/sumP
+		pzHit=sModel.zHit
+		pzShort=sModel.zShort
+		pzMax=sModel.zMax
+		pzRand=sModel.zRand
+		pzDev=sModel.stdDevHit
+		sModel.zHit=eHit/180
+		sModel.zShort=eShort/180
+		sModel.zMax=eShort/180
+		sModel.zRand=eRand/180
+		sModel.stdDevHit=eHitz/eHit
+		sModel.lambdaShort=eShort/eShortz
+		convCrit=math.sqrt((pzHit-sModel.zHit)**2+(pzShort-sModel.zShort)**2+(pzMax-sModel.zMax)**2\
+				+(pzRand-sModel.zRand)**2+(pzDev-sModel.stdDevHit)**2)
+		print(sModel.zHit,sModel.zShort,sModel.zMax,sModel.zRand,sModel.stdDevHit,sModel.lambdaShort)
+	return 0
 
 def init_particles_random(num_particles, occupancy_map):
 
@@ -84,6 +127,10 @@ def init_particles_random(num_particles, occupancy_map):
 	theta0_vals = np.random.uniform( -3.14, 3.14, (num_particles, 1) )
 	
 	# initialize weights for all particles
+	#x0_vals=[[4100] for i in range(num_particles)]
+	#y0_vals=[[4000] for i in range(num_particles)]
+	#theta0_vals=[[3.14] for i in range(num_particles)]
+
 	w0_vals = np.ones( (num_particles,1), dtype=np.float64)
 	#w0_vals = w0_vals / num_particles
 	w0_vals_norm=[w/num_particles for w in w0_vals]
@@ -117,16 +164,19 @@ def main():
 	"""
 	src_path_map = '../data/map/wean.dat'
 	src_path_log = '../data/log/robotdata1.log'
-
+	fPath = './gifPics'
+	imgCount=0
+	
 	map_obj = MapReader(src_path_map)
 	occupancy_map = map_obj.get_map()
 	logfile = open(src_path_log, 'r')
 
 	motion_model = MotionModel()
 	sensor_model = SensorModel(occupancy_map)
+	sModel2=SensorModel(occupancy_map)
 	resampler = Resampling()
 
-	num_particles = 100
+	num_particles = 50
 	X_bar = init_particles_random(num_particles, occupancy_map)
 
 	vis_flag = 1
@@ -170,7 +220,8 @@ def main():
 		X_bar_new = np.zeros( (num_particles,4), dtype=np.float64)
 		u_t1 = odometry_robot
 		# X_bar.shape[0] (length) decreases from 500 to 499 after time step 1
-
+		#if imgCount==0:
+			#train_weights(sModel2,ranges,[4120,4000,3.14],occupancy_map)
 		#PARALLELIZED MOTION MODEL
 
 		x_t0Arr=[[u_t0,u_t1,X_bar[m,0:3]] for m in range(0,X_bar.shape[0])]
@@ -213,7 +264,8 @@ def main():
 		X_bar = resampler.low_variance_sampler(X_bar)
 
 		if vis_flag:
-			visualize_timestep(X_bar, time_idx)
-
+			imgCount+=1
+			imgPath=fPath+'/img'+'{:04d}'.format(imgCount)+".jpg"
+			visualize_timestep(X_bar, time_idx,imgPath)
 if __name__=="__main__":
 	main()

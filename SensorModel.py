@@ -28,11 +28,11 @@ class SensorModel:
 
 		self.oMap=occupancy_map
 		#note: adjust these later
-		self.stdDevHit=50
-		self.lambdaShort=0.001
+		self.stdDevHit=2000
+		self.lambdaShort=0.01
 		self.measureMax=8000
-		self.zHit=0.0001#0.4
-		self.zShort=0.0000#0.4
+		self.zHit=0.05#0.4
+		self.zShort=0.01#0.4
 		self.zMax=0.1#0.1
 		self.zRand=1-self.zHit-self.zShort-self.zMax#0.1
 		#certainty defines threshold for assuming a grid is occupied
@@ -123,12 +123,14 @@ class SensorModel:
 			+self.zShort*self.pShort(zkt,zktStar)\
 			+self.zMax*self.pMax(zkt)\
 			+self.zRand*self.pRand(zkt)
+			if(self.pShort(zkt,zktStar)>self.pHit(zkt,zktStar)):
+				print(lasAngle,self.pHit(zkt,zktStar),self.pShort(zkt,zktStar))
 			#q=log(p1)+log(p2)+..
 			#print("pHit=",self.pHit(zkt,zktStar),", pShort=",self.pShort(zkt,zktStar),", pMax=",self.pMax(zkt))
 			if p!=0:
 				q=q+math.log(p)
 			else:
-				#return 0
+				print("is 0")
 				return -float("inf")
 		#print("q is",q)
 		#print(x_t1)
