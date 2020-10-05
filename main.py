@@ -4,12 +4,12 @@ import pdb
 import multiprocessing
 import multiprocessing.pool
 import random
+import math
 from multiprocessing.pool import ThreadPool
 from MapReader import MapReader
 from MotionModel import MotionModel
 from SensorModel import SensorModel
 from Resampling import Resampling
-
 from matplotlib import pyplot as plt
 from matplotlib import figure as fig
 import time
@@ -44,7 +44,10 @@ def visualize_map(occupancy_map):
 def visualize_timestep(X_bar, tstep):
 	x_locs = X_bar[:,0]/10.0
 	y_locs = X_bar[:,1]/10.0
-	scat = plt.scatter(x_locs, y_locs, c='r', marker='o')
+	dx=list(map(math.cos,X_bar[:,2]))
+	dy=list(map(math.sin,X_bar[:,2]))
+	#scat = plt.scatter(x_locs, y_locs, c='r', marker='o')
+	scat=plt.quiver(x_locs,y_locs,dx,dy)
 	plt.pause(0.00001)
 	scat.remove()
 
@@ -150,8 +153,8 @@ def main():
 		odometry_robot = meas_vals[0:3] # odometry reading [x, y, theta] in odometry frame
 		time_stamp = meas_vals[-1]
 
-		if ((time_stamp <= 0.0) | (meas_type == "O")): # ignore pure odometry measurements for now (faster debugging)
-			continue
+		#if ((time_stamp <= 0.0) | (meas_type == "O")): # ignore pure odometry measurements for now (faster debugging)
+		#	continue
 
 		if (meas_type == "L"):
 			 odometry_laser = meas_vals[3:6] # [x, y, theta] coordinates of laser in odometry frame

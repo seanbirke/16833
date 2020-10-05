@@ -12,13 +12,13 @@ class MotionModel:
 	def __init__(self):
 
 		# rot_1
-		self.alpha_1 = 0.5
+		self.alpha_1 = 0.1
 		# trans
-		self.alpha_2 = 30
+		self.alpha_2 = 10
 		# trans
-		self.alpha_3 = 30
+		self.alpha_3 = 10
 		# rot_1 + rot_2
-		self.alpha_4 = 30
+		self.alpha_4 = 10
 
 
 	def par_update(self,l):
