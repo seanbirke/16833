@@ -31,8 +31,8 @@ class SensorModel:
 		self.stdDevHit=20
 		self.lambdaShort=0.01
 		self.measureMax=8000
-		self.zHit=0.0001#0.4
-		self.zShort=0#0.4
+		self.zHit=0.0002#0.4
+		self.zShort=0.0001#0.4
 		self.zMax=0#0.1
 		self.zRand=0.9999#0.1
 		#certainty defines threshold for assuming a grid is occupied

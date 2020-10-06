@@ -26,8 +26,8 @@ def visualize_timestep(X_bar, tstep):
 	y_locs = X_bar[:,1]/10.0
 	dx=list(map(math.cos,X_bar[:,2]))
 	dy=list(map(math.sin,X_bar[:,2]))
-	#scat = plt.scatter(x_locs, y_locs, c='r', marker='o')
-	scat=plt.quiver(x_locs,y_locs,dx,dy)
+	scat = plt.scatter(x_locs, y_locs, c='r', marker='o')
+	#scat=plt.quiver(x_locs,y_locs,dx,dy)
 	plt.pause(0.00001)
 	scat.remove()
 
@@ -38,10 +38,10 @@ def init_particles_random(num_particles, occupancy_map):
 	#find all valid unoccupied positions w/in the map
 	for i in range(occupancy_map.shape[0]):
 		for j in range(occupancy_map.shape[1]):
-			if i<350 or i>450:
-				continue
-			if j<350 or j>500:
-				continue
+			#if i<350 or i>450:
+			#	continue
+			#if j<350 or j>500:
+			#	continue
 			if occupancy_map[i][j]<0.1 and occupancy_map[i][j]>-1:
 				valid_x.append(j)
 				valid_y.append(i)
@@ -96,7 +96,7 @@ def main():
 	Initialize Parameters
 	"""
 	src_path_map = '../data/map/wean.dat'
-	src_path_log = '../data/log/robotdata1.log'
+	src_path_log = '../data/log/robotdata2.log'
 
 	map_obj = MapReader(src_path_map)
 	occupancy_map = map_obj.get_map()
@@ -106,7 +106,7 @@ def main():
 	sensor_model = SensorModel(occupancy_map)
 	resampler = Resampling()
 
-	num_particles = 100
+	num_particles = 300
 	X_bar = init_particles_random(num_particles, occupancy_map)
 
 	vis_flag = 1
