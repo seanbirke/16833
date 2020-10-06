@@ -28,13 +28,13 @@ class SensorModel:
 
 		self.oMap=occupancy_map
 		#note: adjust these later
-		self.stdDevHit=20
-		self.lambdaShort=0.01
+		self.stdDevHit=50
+		self.lambdaShort=0.1
 		self.measureMax=8000
-		self.zHit=0.0002#0.4
-		self.zShort=0.0001#0.4
-		self.zMax=0#0.1
-		self.zRand=0.9999#0.1
+		self.zHit=0.0005
+		self.zShort=0.05
+		self.zMax=0.05
+		self.zRand=0.8995
 		#certainty defines threshold for assuming a grid is occupied
 		self.certainty=0.1
 		#laserSubsample defines laser sampling; every nth laser is sampled

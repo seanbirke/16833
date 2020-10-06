@@ -12,11 +12,11 @@ class MotionModel:
 	def __init__(self):
 
 		# rot_1
-		self.alpha_1 = 0.01
+		self.alpha_1 = 0.001
 		# trans
-		self.alpha_2 = 0.1
+		self.alpha_2 = 1
 		# trans
-		self.alpha_3 = 3
+		self.alpha_3 = 1.5
 		# rot_1 + rot_2
 		self.alpha_4 = 0.001
 
